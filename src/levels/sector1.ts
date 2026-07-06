@@ -1,143 +1,94 @@
-import { canMove } from "./MoveValidator";
-import { checkWin } from "./WinChecker";
-import { UndoManager } from "./UndoManager";
+import { LevelData } from "../engine/types";
 
-import {
-  CapsuleState,
-  GameState,
-  LevelData,
-} from "./types";
+export const SECTOR_1_LEVELS: LevelData[] = [
+  {
+    id: 1,
+    name: "Andromeda Core",
+    sector: "Andromeda",
+    emptyCapsules: 2,
 
-export class GameEngine {
-  private level: LevelData;
-  private undo = new UndoManager();
+    capsules: [
+      {
+        id: 0,
+        colors: ["#ff4d4d", "#4d79ff", "#ffd700", "#9d4edd"],
+      },
+      {
+        id: 1,
+        colors: ["#9d4edd", "#ff4d4d", "#4d79ff", "#ffd700"],
+      },
+      {
+        id: 2,
+        colors: ["#ffd700", "#9d4edd", "#ff4d4d", "#4d79ff"],
+      },
+      {
+        id: 3,
+        colors: [],
+      },
+      {
+        id: 4,
+        colors: [],
+      },
+    ],
+  },
 
-  private gameState: GameState;
+  {
+    id: 2,
+    name: "Orion Nebula",
+    sector: "Orion",
+    emptyCapsules: 2,
 
-  constructor(level: LevelData) {
-    this.level = level;
+    capsules: [
+      {
+        id: 0,
+        colors: ["#4d79ff", "#ff4d4d", "#ffd700", "#9d4edd"],
+      },
+      {
+        id: 1,
+        colors: ["#ffd700", "#9d4edd", "#4d79ff", "#ff4d4d"],
+      },
+      {
+        id: 2,
+        colors: ["#9d4edd", "#ffd700", "#ff4d4d", "#4d79ff"],
+      },
+      {
+        id: 3,
+        colors: [],
+      },
+      {
+        id: 4,
+        colors: [],
+      },
+    ],
+  },
 
-    this.gameState = {
-      capsules: this.cloneCapsules(level.capsules),
-      selectedCapsuleId: null,
-      moves: 0,
-      isWon: false,
-      currentLevelId: level.id,
-      history: [],
-    };
-  }
+  {
+    id: 3,
+    name: "Galaxy Rift",
+    sector: "Andromeda",
 
-  private cloneCapsules(
-    capsules: CapsuleState[]
-  ): CapsuleState[] {
-    return capsules.map((c) => ({
-      id: c.id,
-      colors: [...c.colors],
-    }));
-  }
+    emptyCapsules: 2,
 
-  get state(): GameState {
-    return {
-      ...this.gameState,
-      capsules: this.cloneCapsules(this.gameState.capsules),
-    };
-  }
-
-  selectCapsule(id: number) {
-    if (this.gameState.isWon) return;
-
-    const capsule = this.gameState.capsules.find(
-      (c) => c.id === id
-    );
-
-    if (!capsule) return;
-
-    if (capsule.colors.length === 0) return;
-
-    if (this.gameState.selectedCapsuleId === id) {
-      this.gameState.selectedCapsuleId = null;
-      return;
-    }
-
-    this.gameState.selectedCapsuleId = id;
-  }
-
-  moveColor(targetId: number): boolean {
-    if (this.gameState.selectedCapsuleId === null)
-      return false;
-
-    const source = this.gameState.capsules.find(
-      (c) => c.id === this.gameState.selectedCapsuleId
-    );
-
-    const target = this.gameState.capsules.find(
-      (c) => c.id === targetId
-    );
-
-    if (!source || !target) return false;
-
-    if (!canMove(source, target)) return false;
-
-    this.undo.push(this.cloneCapsules(this.gameState.capsules));
-
-    const movingColor =
-      source.colors[source.colors.length - 1];
-
-    while (
-      source.colors.length &&
-      source.colors[source.colors.length - 1] === movingColor &&
-      target.colors.length < 4
-    ) {
-      const color = source.colors.pop();
-
-      if (color) {
-        target.colors.push(color);
-      }
-    }
-
-    this.gameState.selectedCapsuleId = null;
-
-    this.gameState.moves++;
-
-    this.gameState.isWon = checkWin(
-      this.gameState.capsules
-    );
-
-    return true;
-  }
-
-  undoMove() {
-    if (!this.undo.hasHistory()) return;
-
-    const previous = this.undo.pop();
-
-    if (!previous) return;
-
-    this.gameState.capsules =
-      this.cloneCapsules(previous);
-
-    this.gameState.selectedCapsuleId = null;
-
-    this.gameState.moves = Math.max(
-      0,
-      this.gameState.moves - 1
-    );
-
-    this.gameState.isWon = false;
-  }
-
-  restart() {
-    this.undo.clear();
-
-    this.gameState = {
-      capsules: this.cloneCapsules(
-        this.level.capsules
-      ),
-      selectedCapsuleId: null,
-      moves: 0,
-      isWon: false,
-      currentLevelId: this.level.id,
-      history: [],
-    };
-  }
-}
+    capsules: [
+      {
+        id: 0,
+        colors: ["#ff4d4d", "#9d4edd", "#4d79ff", "#ffd700"],
+      },
+      {
+        id: 1,
+        colors: ["#4d79ff", "#ffd700", "#9d4edd", "#ff4d4d"],
+      },
+      {
+        id: 2,
+        colors: ["#ffd700", "#ff4d4d", "#4d79ff", "#9d4edd"],
+      },
+      {
+        id: 3,
+        colors: [],
+      },
+      {
+        id: 4,
+        colors: [],
+      },
+    ],
+  },
+];
