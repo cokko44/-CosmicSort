@@ -1,3 +1,5 @@
+// src/engine/types.ts
+
 export type Color = string;
 
 export interface CapsuleState {
@@ -13,7 +15,7 @@ export interface LevelData {
   emptyCapsules: number;
 }
 
-export type HistoryState = CapsuleState[][];
+export type CapsuleSnapshot = CapsuleState[];
 
 export interface GameState {
   capsules: CapsuleState[];
@@ -21,5 +23,7 @@ export interface GameState {
   moves: number;
   isWon: boolean;
   currentLevelId: number;
-  history: HistoryState;
+  history: CapsuleSnapshot[];
 }
+
+export const CAPSULE_CAPACITY = 4;
